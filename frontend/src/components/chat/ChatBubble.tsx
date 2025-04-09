@@ -11,7 +11,7 @@ export default function ChatBubble({ content, isUser }: { content: string; isUse
         </div>
       )}
       <div
-        className={`rounded-lg  text-lg p-4 w-[calc(100%-3.5em)] ${isUser ? 'bg-primary-light text-black' : 'bg-primary-light-active text-[#1B2559]'}`}
+        className={`rounded-lg  text-lg p-4 w-[calc(100%-3.5em)] ${isUser ? 'bg-primary-light text-black border-primary-light-active border-2' : 'bg-primary-light-active text-[#1B2559]'}`}
       >
         {content}
         {isUser ? (

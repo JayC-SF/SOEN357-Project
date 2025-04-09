@@ -1,13 +1,14 @@
 import { Send } from '@mui/icons-material';
 import AddIcon from '@mui/icons-material/Add';
+
 export default function ChatInput() {
   return (
-    <div className=" items-center m-2 bg-primary-light-active rounded-lg">
+    <div className="m-2 rounded-lg border border-gray-300 focus-within:border-primary-normal focus-within:ring-2 focus-within:ring-primary-normal transition">
       <div>
         <input
           type="text"
           placeholder="Type your message here..."
-          className="w-full p-2 rounded-lg"
+          className="w-full p-2 rounded-lg outline-none"
         />
       </div>
       <div className="flex flex-row justify-between items-center p-2">
