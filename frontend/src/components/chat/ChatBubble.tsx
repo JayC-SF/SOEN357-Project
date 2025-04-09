@@ -11,11 +11,13 @@ export default function ChatBubble({ content, isUser }: { content: string; isUse
         </div>
       )}
       <div
-        className={`rounded-lg text-lg p-2 max-w-xs ${isUser ? 'bg-primary-light text-black' : 'bg-primary-light-active text-[#1B2559]'}`}
+        className={`rounded-lg  text-lg p-4 w-[calc(100%-3.5em)] ${isUser ? 'bg-primary-light text-black' : 'bg-primary-light-active text-[#1B2559]'}`}
       >
         {content}
         {isUser ? (
-          <Edit />
+          <div className="flex flex-row justify-end gap-2 mt-2">
+            <Edit />
+          </div>
         ) : (
           <div className="flex flex-row justify-end gap-2 mt-2">
             <ThumbUp />
