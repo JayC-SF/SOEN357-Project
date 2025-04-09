@@ -6,6 +6,7 @@ import React from 'react';
 import './App.css';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import ChatPage from './pages/ChatPage';
+import LoginPage from './pages/LoginPage';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <main>
         <Routes>
           <Route path="/" element={<ChatPage />} />
+          <Route path="/login" element={<LoginPage />} />
         </Routes>
       </main>
     </BrowserRouter>
