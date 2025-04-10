@@ -1,13 +1,14 @@
 import { Send } from '@mui/icons-material';
 import AddIcon from '@mui/icons-material/Add';
 import { useState } from 'react';
-export default function ChatInput({ setMessages }: { setMessages: (item: any) => void }) {
+import { BackendResponse } from '../../interfaces/BackendResponse';
+export default function ChatInput({
+  sendMessage,
+}: {
+  sendMessage: (item: string) => Promise<void>;
+}) {
   const [message, setMessage] = useState('');
-  const sendMessage = () => {
-    if (message.trim() === '') return;
-    setMessages((prevMessages: any) => [...prevMessages, { content: message, isUser: true }]);
-    setMessage('');
-  };
+
   return (
     <div className="m-2 rounded-lg border border-gray-300 focus-within:border-primary-normal focus-within:ring-2 focus-within:ring-primary-normal transition">
       <div>
@@ -17,7 +18,7 @@ export default function ChatInput({ setMessages }: { setMessages: (item: any) =>
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
-              sendMessage();
+              sendMessage(message);
             }
           }}
           placeholder="Type your message here..."
@@ -28,7 +29,10 @@ export default function ChatInput({ setMessages }: { setMessages: (item: any) =>
         <button>
           <AddIcon sx={{ color: '#5442da' }} />
         </button>
-        <button onClick={sendMessage} className="bg-primary-normal text-white p-2 rounded-xl ml-2">
+        <button
+          onClick={() => sendMessage(message)}
+          className="bg-primary-normal text-white p-2 rounded-xl ml-2"
+        >
           <Send />
         </button>
       </div>
