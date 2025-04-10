@@ -4,7 +4,7 @@ interface Task {
   priority: 'low' | 'medium' | 'high';
 }
 
-interface Phase {
+export interface Phase {
   title: string;
   description: string;
   startDate: string;
