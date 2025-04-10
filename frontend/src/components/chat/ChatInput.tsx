@@ -1,7 +1,6 @@
 import { Send } from '@mui/icons-material';
 import AddIcon from '@mui/icons-material/Add';
 import { useState } from 'react';
-import { BackendResponse } from '../../interfaces/BackendResponse';
 export default function ChatInput({
   sendMessage,
 }: {
@@ -18,7 +17,9 @@ export default function ChatInput({
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
-              sendMessage(message);
+              const trimmedMessage = message.trim();
+              setMessage('');
+              sendMessage(trimmedMessage);
             }
           }}
           placeholder="Type your message here..."
@@ -30,7 +31,11 @@ export default function ChatInput({
           <AddIcon sx={{ color: '#5442da' }} />
         </button>
         <button
-          onClick={() => sendMessage(message)}
+          onClick={() => {
+            const trimmedMessage = message.trim();
+            setMessage('');
+            sendMessage(trimmedMessage);
+          }}
           className="bg-primary-normal text-white p-2 rounded-xl ml-2"
         >
           <Send />
