@@ -4,7 +4,7 @@ export default function ChatTaskBreakdown({ phases }: { phases: BackendResponse 
   return (
     <div className="p-4 bg-gray-50">
       <h2 className="text-xl font-bold mb-4">Objectives</h2>
-      <div className="space-y-6">
+      <div className="grid grid-cols-2 gap-4">
         {phases.map((phase, index) => (
           <div key={index} className="rounded-lg border bg-white shadow-md p-4">
             <div className="flex items-center justify-between mb-4">
