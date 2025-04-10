@@ -5,8 +5,11 @@ import ChatSideBar from '../components/chat/ChatSideBar';
 import ChatHeader from '../components/chat/ChatHeader';
 import { BackendResponse } from '../interfaces/BackendResponse';
 import ChatTaskBreakdown from '../components/chat/ChatTaskBreakdown';
+import Message from '../interfaces/Message';
 export default function ChatPage() {
   const [response, setResponse] = useState<BackendResponse>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [messages, setMessages] = useState<Message[]>([]);
   useEffect(() => {
     const fetchData = async () => {
       setResponse([
@@ -131,11 +134,19 @@ export default function ChatPage() {
           <div className="flex-grow p-4 bg-gray-100 border-t border-gray-300 overflow-y-auto">
             <ChatBubble content="Hello, how are you?" isUser={true} />
             <ChatTaskBreakdown phases={response} />
+            {messages.map((message, index) => {
+              if (message.isUser && typeof message.content === 'string') {
+                return <ChatBubble key={index} content={message.content} isUser={true} />;
+              } else if (!message.isUser && Array.isArray(message.content)) {
+                return <ChatTaskBreakdown phases={message.content} key={index} />;
+              }
+              return null; // Handle unexpected cases gracefully
+            })}
           </div>
 
           {/* Chat Input */}
           <div className="p-2 bg-white border-t border-gray-300 flex-shrink-0">
-            <ChatInput />
+            <ChatInput setMessages={setMessages} />
           </div>
         </div>
       </div>
