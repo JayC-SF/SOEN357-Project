@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ChatBubble from '../components/chat/ChatBubble';
 import ChatInput from '../components/chat/ChatInput';
 import ChatSideBar from '../components/chat/ChatSideBar';
@@ -7,10 +7,11 @@ import { BackendResponse } from '../interfaces/BackendResponse';
 import ChatTaskBreakdown from '../components/chat/ChatTaskBreakdown';
 import Message from '../interfaces/Message';
 import LoadingSpinner from '../components/LoadingSpinner';
+
 export default function ChatPage() {
-  const [response, setResponse] = useState<BackendResponse>([]);
-  const [isLoading, setIsLoading] = useState(false); // Set to false initially
+  const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
+  const chatContainerRef = useRef<HTMLDivElement>(null); // Ref for the chat container
 
   const fetchResponse = async ({ message }: { message: string }): Promise<BackendResponse> => {
     await new Promise((resolve) => setTimeout(resolve, 5000)); // Simulate delay
@@ -117,10 +118,12 @@ export default function ChatPage() {
 
   const sendMessage = async (message: string) => {
     if (message.trim() === '') return;
+
     setMessages((prevMessages) => [
       ...prevMessages,
       { content: message, isUser: true, timestamp: new Date() },
     ]);
+
     setIsLoading(true);
     const result = await fetchResponse({ message });
     setMessages((prevMessages) => [
@@ -129,6 +132,13 @@ export default function ChatPage() {
     ]);
     setIsLoading(false);
   };
+
+  // Scroll to the bottom whenever messages change
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [messages, isLoading]);
 
   return (
     <div className="h-screen flex flex-col overflow-y-hidden">
@@ -147,7 +157,10 @@ export default function ChatPage() {
         {/* Chat Area */}
         <div className="flex flex-col w-5/6">
           {/* Chat Bubbles */}
-          <div className="flex-grow p-4 bg-gray-100 border-t border-gray-300 overflow-y-auto">
+          <div
+            ref={chatContainerRef} // Attach the ref to the chat container
+            className="flex-grow p-4 bg-gray-100 border-t border-gray-300 overflow-y-auto"
+          >
             {messages.map((message, index) => {
               if (message.isUser && typeof message.content === 'string') {
                 return <ChatBubble key={index} content={message.content} isUser={true} />;
