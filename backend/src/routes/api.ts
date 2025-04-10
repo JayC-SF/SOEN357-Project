@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { TestController } from '../controllers/test';
 import userRoute from './user';
+import assignmentRoute from './assignment';
 import { SessionMiddleware } from '../middleware/session';
 import { StatusCodes } from 'http-status-codes';
 const router = Router();
@@ -13,6 +14,7 @@ router.get('/', TestController);
 
 // api/users/
 router.use('/users', userRoute);
+router.use('/assignment', assignmentRoute);
 
 // Catch all route for api/ group.
 router.all('*', (_, res) => {

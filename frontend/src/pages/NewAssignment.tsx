@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Upload, Calendar, ArrowLeft } from 'lucide-react';
+import { Upload, Calendar, ArrowLeft, Loader2 } from 'lucide-react';
+import { getAssignments, storeAssignments } from '../utility/storage';
 
 function NewAssignment() {
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
@@ -12,15 +14,6 @@ function NewAssignment() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Create FormData object to handle file upload
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('description', description);
-    formData.append('dueDate', dueDate);
-    if (file) {
-      formData.append('file', file);
-    }
-
     // TODO: Implement API call
     console.log('Form data:', {
       title,
@@ -28,8 +21,31 @@ function NewAssignment() {
       dueDate,
       fileName: file?.name
     });
+    
+    const assignments = getAssignments();
+    setIsSubmitting(true);
+    const res  = await fetch('/api/assignment/new', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: assignments.length + 1,
+        title,
+        description,
+        dueDate
+      })
+    })
+    if (!res.ok) {
+      console.error('Failed to create assignment');
+      return;
+    }
+    const newAssignment = await res.json();
+
+    storeAssignments([...assignments, newAssignment]);
 
     // Navigate back to dashboard after submission
+    setIsSubmitting(false);
     navigate('/dashboard');
   };
 
@@ -131,11 +147,19 @@ function NewAssignment() {
               </div>
 
               <div className="flex justify-end">
-                <button
+              <button
                   type="submit"
-                  className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition"
+                  disabled={isSubmitting}
+                  className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Create Assignment
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                      Creating...
+                    </>
+                  ) : (
+                    'Create Assignment'
+                  )}
                 </button>
               </div>
             </form>

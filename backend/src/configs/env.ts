@@ -27,6 +27,8 @@ function requiredEnv(variableName: string): string {
 export const ENV_VARS = {
   DB_CONN_STRING: requiredEnv('DB_CONN_STRING'),
   DB_NAME: requiredEnv('DB_NAME'),
+  GEMINI_API_KEY: requiredEnv('GEMINI_API_KEY'),
+  GEMINI_URL: requiredEnv('GEMINI_URL'),
   PORT: process.env.PORT || 3000,
   IS_PROD: process.env.NODE_ENV !== undefined,
   HTTPS: process.env.HTTPS !== undefined,

@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { CheckCircle2, PlusCircle, ChevronRight, MoreVertical, Calendar, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { getAssignments, storeAssignments } from '../utility/storage';
 
+type Status = 'In Progress' | 'Completed' | 'Not Started'
 interface Task {
   id: number;
   title: string;
@@ -13,96 +15,23 @@ interface Phase {
   title: string;
   description: string;
   progress: number;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
   tasks: Task[];
 }
 
-interface Assignment {
+export interface Assignment {
   id: number;
   title: string;
   description: string;
-  dueDate: Date;
-  status: 'In Progress' | 'Completed' | 'Not Started';
+  dueDate: string;
+  status: Status;
   progress: number;
   phases: Phase[];
 }
 
 function Dashboard() {
-  const [assignments, setAssignments] = useState<Assignment[]>([
-    {
-      id: 1,
-      title: "Final Year Project",
-      description: "Research and implementation of machine learning algorithms",
-      dueDate: new Date(2025, 5, 30),
-      status: 'In Progress',
-      progress: 45,
-      phases: [
-        {
-          id: 1,
-          title: "Research & Planning",
-          description: "Literature review and project planning",
-          progress: 100,
-          startDate: new Date(2025, 2, 1),
-          endDate: new Date(2025, 2, 15),
-          tasks: [
-            { id: 1, title: "Review existing literature", completed: true },
-            { id: 2, title: "Define project scope", completed: true },
-            { id: 3, title: "Create project timeline", completed: true }
-          ]
-        },
-        {
-          id: 2,
-          title: "Implementation",
-          description: "Develop core algorithms",
-          progress: 30,
-          startDate: new Date(2025, 2, 16),
-          endDate: new Date(2025, 3, 15),
-          tasks: [
-            { id: 1, title: "Set up development environment", completed: true },
-            { id: 2, title: "Implement base algorithms", completed: false },
-            { id: 3, title: "Create test cases", completed: false }
-          ]
-        }
-      ]
-    },
-    {
-      id: 2,
-      title: "Web Development Course",
-      description: "Complete online course on full-stack development",
-      dueDate: new Date(2025, 4, 15),
-      status: 'In Progress',
-      progress: 65,
-      phases: [
-        {
-          id: 1,
-          title: "Frontend Basics",
-          description: "Learn HTML, CSS, and JavaScript",
-          progress: 100,
-          startDate: new Date(2025, 2, 1),
-          endDate: new Date(2025, 2, 15),
-          tasks: [
-            { id: 1, title: "Complete HTML modules", completed: true },
-            { id: 2, title: "Complete CSS modules", completed: true },
-            { id: 3, title: "Complete JavaScript basics", completed: true }
-          ]
-        },
-        {
-          id: 2,
-          title: "Backend Development",
-          description: "Learn Node.js and databases",
-          progress: 30,
-          startDate: new Date(2025, 2, 16),
-          endDate: new Date(2025, 3, 15),
-          tasks: [
-            { id: 1, title: "Learn Node.js basics", completed: true },
-            { id: 2, title: "Study database concepts", completed: false },
-            { id: 3, title: "Build sample API", completed: false }
-          ]
-        }
-      ]
-    }
-  ]);
+  const [assignments, setAssignments] = useState<Assignment[]>(getAssignments());
 
   const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(assignments[0]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -127,8 +56,8 @@ function Dashboard() {
         const totalProgress = Math.round(
           updatedPhases.reduce((acc, phase) => acc + phase.progress, 0) / updatedPhases.length
         );
-
-        const updatedAssignment = { ...assignment, phases: updatedPhases, progress: totalProgress };
+        const status: Status  = totalProgress >= 100 ? 'Completed' : totalProgress > 0 ? 'In Progress' : 'Not Started';
+        const updatedAssignment = { ...assignment, phases: updatedPhases, progress: totalProgress, status };
         // Update selected assignment
         setSelectedAssignment(updatedAssignment);
         return updatedAssignment;
@@ -137,18 +66,21 @@ function Dashboard() {
     });
 
     setAssignments(updatedAssignments);
+    storeAssignments(updatedAssignments);
   };
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', {
+  const formatDate = (date: string) => {
+    return (new Date(date)).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric'
     });
   };
 
-  const getDurationInDays = (startDate: Date, endDate: Date) => {
-    const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+  const getDurationInDays = (startDate: string, endDate: string) => {
+    const sDate = new Date(startDate)
+    const eDate = new Date(endDate)
+    const diffTime = Math.abs(eDate.getTime() - sDate.getTime());
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
 
@@ -174,7 +106,7 @@ function Dashboard() {
 
       <div className="grid grid-cols-12 gap-6">
         {/* Assignments List */}
-        <div className="col-span-12 md:col-span-4 bg-white rounded-xl shadow-sm border border-gray-200">
+        <div className="col-span-12 md:col-span-4 bg-white rounded-xl shadow-sm border border-gray-200 fit-content">
           <div className="p-4 border-b border-gray-200">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
