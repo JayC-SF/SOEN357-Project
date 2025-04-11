@@ -1,4 +1,3 @@
-import React from 'react';
 import { ArrowRight, Brain, Clock, Target } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
