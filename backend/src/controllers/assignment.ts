@@ -42,9 +42,11 @@ USER INPUT:
 ID:
 ${body.id}
 TITLE:
-${body.title}
+${body.title.trim()}
 Description:
-${body.description}
+${body.description.trim()}
+START DATE:
+${new Date().toISOString()}
 DUE DATE:
 ${body.dueDate.toISOString()}
 \`\`\`
@@ -79,6 +81,8 @@ phases: Phase[];
 
 Now use the following data to generate a valid JSON response only. 
 Create a series of phases and for each phases create a series of tasks for the user.
+Make sure to adhere to the start and end dates and that phases do not overlap in time (ie the next phase doesn't start before the previous phase ends).
+Do not include the time in the date, just the date.
 Return ONLY the JSON, no extra explanation.
 `;
 
