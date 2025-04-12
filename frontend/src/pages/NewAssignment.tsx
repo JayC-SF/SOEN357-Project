@@ -1,59 +1,59 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Upload, Calendar, ArrowLeft, Loader2 } from 'lucide-react';
-import { getAssignments, storeAssignments } from '../utility/storage';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Upload, Calendar, ArrowLeft, Loader2 } from "lucide-react";
+import { getAssignments, storeAssignments } from "../utility/storage";
 
 function NewAssignment() {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [dueDate, setDueDate] = useState('');
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [dueDate, setDueDate] = useState("");
   const [file, setFile] = useState<File | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // TODO: Implement API call
-    console.log('Form data:', {
+    console.log("Form data:", {
       title,
       description,
       dueDate,
-      fileName: file?.name
+      fileName: file?.name,
     });
-    
+
     const assignments = getAssignments();
     setIsSubmitting(true);
-    const res  = await fetch('/api/assignment/new', {
-      method: 'POST',
+    const res = await fetch("/api/assignment/new", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         id: assignments.length + 1,
         title,
         description,
-        dueDate
-      })
-    })
+        dueDate,
+      }),
+    });
     if (!res.ok) {
-      console.error('Failed to create assignment');
+      console.error("Failed to create assignment");
       return;
     }
     const newAssignment = await res.json();
 
-    storeAssignments([...assignments, newAssignment]);
+    storeAssignments([newAssignment, ...assignments]);
 
     // Navigate back to dashboard after submission
     setIsSubmitting(false);
-    navigate('/dashboard');
+    navigate("/dashboard");
   };
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4">
         <button
-          onClick={() => navigate('/dashboard')}
+          onClick={() => navigate("/dashboard")}
           className="flex items-center text-gray-600 hover:text-gray-900 mb-6"
         >
           <ArrowLeft className="h-5 w-5 mr-2" />
@@ -62,11 +62,16 @@ function NewAssignment() {
 
         <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200">
           <div className="p-6">
-            <h1 className="text-2xl font-bold text-gray-900 mb-6">Create New Assignment</h1>
-            
+            <h1 className="text-2xl font-bold text-gray-900 mb-6">
+              Create New Assignment
+            </h1>
+
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="title"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Assignment Title
                 </label>
                 <input
@@ -81,7 +86,10 @@ function NewAssignment() {
               </div>
 
               <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="description"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Description
                 </label>
                 <textarea
@@ -96,7 +104,10 @@ function NewAssignment() {
               </div>
 
               <div>
-                <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="dueDate"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Due Date
                 </label>
                 <div className="relative">
@@ -113,7 +124,10 @@ function NewAssignment() {
               </div>
 
               <div>
-                <label htmlFor="file" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="file"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Attachment (Optional)
                 </label>
                 <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-indigo-500 transition-colors">
@@ -147,7 +161,7 @@ function NewAssignment() {
               </div>
 
               <div className="flex justify-end">
-              <button
+                <button
                   type="submit"
                   disabled={isSubmitting}
                   className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -158,7 +172,7 @@ function NewAssignment() {
                       Creating...
                     </>
                   ) : (
-                    'Create Assignment'
+                    "Create Assignment"
                   )}
                 </button>
               </div>
