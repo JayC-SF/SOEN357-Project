@@ -5,7 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import NewAssignment from "./pages/NewAssignment";
-import ProgressTracker from "./pages/ProgressTracket";
+import ProgressTracker from "./pages/ProgressTracker";
 
 function App() {
   const location = useLocation();
